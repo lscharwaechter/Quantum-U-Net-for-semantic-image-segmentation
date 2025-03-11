@@ -52,20 +52,20 @@ class QuantumUNet(nn.Module):
         super().__init__()
 
         # Encoder (Downsampling)
-        self.enc1 = nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1)     # 128×128 -> 128×128
-        self.pool1 = nn.MaxPool2d(2, 2)                                      # 128×128 -> 64×64
+        self.enc1 = nn.Conv2d(1, 64, kernel_size=3, stride=1, padding=1)     # 128x128 -> 128x128
+        self.pool1 = nn.MaxPool2d(2, 2)                                      # 128x128 -> 64x64
 
-        self.enc2 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)   # 64×64 -> 64×64
-        self.pool2 = nn.MaxPool2d(2, 2)                                      # 64×64 -> 32×32
+        self.enc2 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)   # 64x64 -> 64x64
+        self.pool2 = nn.MaxPool2d(2, 2)                                      # 64x64 -> 32x32
 
-        self.enc3 = nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1)  # 32×32 -> 32×32
-        self.pool3 = nn.MaxPool2d(2, 2)                                      # 32×32 -> 16×16
+        self.enc3 = nn.Conv2d(128, 256, kernel_size=3, stride=1, padding=1)  # 32x32 -> 32x32
+        self.pool3 = nn.MaxPool2d(2, 2)                                      # 32x32 -> 16x16
 
-        self.enc4 = nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1)  # 16×16 -> 16×16
-        self.pool4 = nn.MaxPool2d(2, 2)                                      # 16×16 -> 8×8
+        self.enc4 = nn.Conv2d(256, 512, kernel_size=3, stride=1, padding=1)  # 16x16 -> 16x16
+        self.pool4 = nn.MaxPool2d(2, 2)                                      # 16x16 -> 8x8
 
-        self.enc5 = nn.Conv2d(512, 1024, kernel_size=3, stride=1, padding=1) # 8×8 -> 8×8
-        self.pool5 = nn.MaxPool2d(2, 2)                                      # 8×8 -> 4×4
+        self.enc5 = nn.Conv2d(512, 1024, kernel_size=3, stride=1, padding=1) # 8x8 -> 8x8
+        self.pool5 = nn.MaxPool2d(2, 2)                                      # 8x8 -> 4x4
 
         # Quantum Processing
         self.reduce_channels = nn.Conv2d(1024, 1, kernel_size=1) # Reduce channels before quantum
@@ -73,19 +73,19 @@ class QuantumUNet(nn.Module):
         self.expand_channels = nn.Conv2d(1, 1024, kernel_size=1) # Expand quantum output back
         
         # Decoder (Upsampling)
-        self.up1 = nn.ConvTranspose2d(1024, 1024, kernel_size=3, stride=2, padding=1, output_padding=1) # 4×4 -> 8×8
+        self.up1 = nn.ConvTranspose2d(1024, 1024, kernel_size=3, stride=2, padding=1, output_padding=1) # 4x4 -> 8x8
         self.dec1 = nn.Conv2d(2048, 1024, kernel_size=3, stride=1, padding=1)
 
-        self.up2 = nn.ConvTranspose2d(1024, 512, kernel_size=3, stride=2, padding=1, output_padding=1)  # 8×8 -> 16×16
+        self.up2 = nn.ConvTranspose2d(1024, 512, kernel_size=3, stride=2, padding=1, output_padding=1)  # 8x8 -> 16x16
         self.dec2 = nn.Conv2d(1024, 512, kernel_size=3, stride=1, padding=1)
 
-        self.up3 = nn.ConvTranspose2d(512, 256, kernel_size=3, stride=2, padding=1, output_padding=1)   # 16×16 -> 32×32
+        self.up3 = nn.ConvTranspose2d(512, 256, kernel_size=3, stride=2, padding=1, output_padding=1)   # 16x16 -> 32x32
         self.dec3 = nn.Conv2d(512, 256, kernel_size=3, stride=1, padding=1)
 
-        self.up4 = nn.ConvTranspose2d(256, 128, kernel_size=3, stride=2, padding=1, output_padding=1)   # 32×32 -> 64×64
+        self.up4 = nn.ConvTranspose2d(256, 128, kernel_size=3, stride=2, padding=1, output_padding=1)   # 32x32 -> 64x64
         self.dec4 = nn.Conv2d(256, 128, kernel_size=3, stride=1, padding=1)
 
-        self.up5 = nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1)    # 64×64 -> 128×128
+        self.up5 = nn.ConvTranspose2d(128, 64, kernel_size=3, stride=2, padding=1, output_padding=1)    # 64x64 -> 128x128
         self.final_conv = nn.Conv2d(128, 4, kernel_size=1)  # Final segmentation (4 classes)
 
     def forward(self, x):
@@ -105,24 +105,24 @@ class QuantumUNet(nn.Module):
         x4p = self.pool4(x4)
 
         x5 = torch.relu(self.enc5(x4p))
-        x5p = self.pool5(x5)  # 8×8 → 4×4 (Quantum Input)
+        x5p = self.pool5(x5) # 8x8 -> 4x4 (Quantum Input)
 
         ################################
         ##     Quantum Processing     ##
         ################################
         
         # Collapse channels before quantum processing
-        x5_reduced = self.reduce_channels(x5p)  # (batch, 1024, 4, 4) -> (batch, 1, 4, 4)
+        x5_reduced = self.reduce_channels(x5p) # (batch, 1024, 4, 4) -> (batch, 1, 4, 4)
         
         # Flatten for quantum input
-        q_input = x5_reduced.view(x5_reduced.shape[0], -1)  # (batch, 16)
+        q_input = x5_reduced.view(x5_reduced.shape[0], -1) # (batch, 16)
         
         # Quantum feature extraction
-        q_output = self.quantum_conv(q_input)  # (batch, 16)
+        q_output = self.quantum_conv(q_input) # (batch, 16)
     
         # Reshape and expand Back    
-        q_output = q_output.view(q_output.shape[0], 1, 4, 4)  # Reshape to (batch, 16, 4, 4)
-        q_output = self.expand_channels(q_output)  # Expand back to (batch, 1024, 4, 4)
+        q_output = q_output.view(q_output.shape[0], 1, 4, 4) # Reshape to (batch, 16, 4, 4)
+        q_output = self.expand_channels(q_output) # Expand back to (batch, 1024, 4, 4)
         
         ################################
         ##          Dncoder           ##
