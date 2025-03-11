@@ -11,5 +11,11 @@ In this experiment, the [AI4Mars dataset](https://data.nasa.gov/Space-Science/AI
 - Big Rock (3,3,3): Large, scattered boulders that obstruct movement.
 - NULL (255,255,255): Unlabeled regions, including distant terrain or rover components.
 
-The quantum circuit uses alternating RX and RY gates and CNOT gates for entanglement:
-<img src="[image.jpg](https://github.com/user-attachments/assets/3f1e00e1-c5d2-457e-8e91-e3db59b614cd)" alt="Description" width="300">
+The quantum circuit in the U-Net bottleneck uses a specific alternating RX and RY gate scheme and CNOT gates for entanglement:
+<p align="center">
+<img src="https://github.com/user-attachments/assets/3f1e00e1-c5d2-457e-8e91-e3db59b614cd" width="250"/>
+</p>
+
+<p align="center">
+<img src="https://github.com/user-attachments/assets/e7432284-8296-4da8-9d63-1f5f176c9af3" width="600"/>
+</p>
