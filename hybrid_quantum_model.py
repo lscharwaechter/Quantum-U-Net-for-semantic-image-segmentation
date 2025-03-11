@@ -125,7 +125,7 @@ class QuantumUNet(nn.Module):
         q_output = self.expand_channels(q_output) # Expand back to (batch, 1024, 4, 4)
         
         ################################
-        ##          Dncoder           ##
+        ##          Decoder           ##
         ################################
         d1 = torch.cat([self.up1(q_output), x5], dim=1)
         d1 = torch.relu(self.dec1(d1)) # (batch, 1024, 8, 8)
