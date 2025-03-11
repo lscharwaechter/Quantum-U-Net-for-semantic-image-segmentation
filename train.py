@@ -190,7 +190,7 @@ print(f"IoU Score: {test_iou:.4f}, Dice Score: {test_dice:.4f}")
 #%%
 
 # Extract the trained quantum parameters
-quantum_layer = model.quantum_conv  # Access the QuantumConvLayer
+quantum_layer = model.quantum_conv # Access the QuantumConvLayer
 trained_q_params = quantum_layer.q_params.detach().cpu().numpy() # Convert to numpy for analysis
 
 fig, ax = plt.subplots(figsize=(8, 5))
@@ -251,9 +251,6 @@ plt.show()
 
 
 #%%
-
-# Define a 4x4 grid of qubits
-#qubits = cirq.GridQubit(4, 4)
 n_qubits = 16
 
 # Define PennyLane device
