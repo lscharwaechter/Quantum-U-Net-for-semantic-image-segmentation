@@ -112,7 +112,7 @@ class QuantumUNet(nn.Module):
         ################################
         
         # Collapse channels before quantum processing
-        x5_reduced = self.reduce_channels(x5p)  # (batch, 1024, 4, 4) → (batch, 1, 4, 4)
+        x5_reduced = self.reduce_channels(x5p)  # (batch, 1024, 4, 4) -> (batch, 1, 4, 4)
         
         # Flatten for quantum input
         q_input = x5_reduced.view(x5_reduced.shape[0], -1)  # (batch, 16)
