@@ -140,6 +140,6 @@ class QuantumUNet(nn.Module):
         d4 = torch.relu(self.dec4(d4)) # (batch, 128, 64, 64)
         
         d5 = torch.cat([self.up5(d4), x1], dim=1)
-        output = self.final_conv(d5) # (batch, 4, 128, 128): 4 terrain class possibilities
+        output = self.final_conv(d5) # (batch, 4, 128, 128): 4 terrain class possibilities (logits)
         
         return output
